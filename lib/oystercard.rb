@@ -7,7 +7,7 @@ require_relative 'journey'
 # Class of the oystercard, the card itself
 class Oystercard
   MAXIMUM_BALANCE = 90
-  attr_reader :balance, :journey, :history
+  attr_reader :balance, :journey, :history, :stations
 
   def initialize
     @balance = 0
@@ -15,6 +15,7 @@ class Oystercard
     # check on the functionality of @journey here
     @journey = nil
     @in_journey = false
+    @stations = []
   end
 
   def top_up(amount)
@@ -39,6 +40,15 @@ class Oystercard
     @journey.finish(station)
     deduct(@journey.fare)
     @history << { entry_station: @journey.entry_station, exit_station: @journey.exit_station }
+  end
+
+  def load_stations(filename)
+    File.foreach(filename) do |line| 
+      line.split(",") do |name, zone|
+        stringname = name.to_str
+        @stations << Station.new(stringname, zone)
+      end
+    end
   end
 
   private
